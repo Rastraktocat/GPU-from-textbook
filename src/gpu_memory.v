@@ -1,11 +1,14 @@
 module gpu_memory(
 	input wire clk,
-	input wire [5:0] warp_num,
-	input wire opc, 
 	input wire register,
 	input wire memory,
 	input wire read,
 	input wire write, 
+	input wire [5:0] warp_num,
+	input wire offset,
+	input wire index, 
+	input wire tag,
+	output wire hit,
 	output wire[63:0] out
 	);
 	genvar i;
@@ -29,11 +32,16 @@ module gpu_memory(
 		end
 	endgenerate
 	
+	gpu_cache_L1 gcl(); 
+	// 64 bit data blocks.
+	// Set associative cache
+	// Write-allocate
+	
 	always@(posedge clk) begin
 		read_mem <= 0; 
-		read_bank <= 0;
+		read_reg <= 0;
 		write_mem <= 0; 
-		write_bank <= 0;
+		write_reg <= 0;
 		if (memory) begin
 			read_mem <= read;
 			write_mem <= write;
@@ -43,6 +51,8 @@ module gpu_memory(
 			write_reg <= write;
 		end
 		
+		//Make a global memory policy. 
 	end // always
+		
 	
 endmodule

@@ -1,27 +1,34 @@
 module gpu(
 	input wire clk,
-	input wire [3:0] pc, 
-	input wire [3:0] highest_num, 
+	input wire [15:0] pc, 
+	input wire [15:0] highest_num, 
 	output wire exit,
 	output reg exit_
 	);
 	
-	reg [3:0] program_counter;
+	reg [15:0] pc_in;
+	reg [15:0] pc_out;
 	integer i;
 	
-	gpu_warp gw(.clk(clk), .pc(program_counter), .exit(exit));
+	gpu_warp gw(.clk(clk), .pc(pc_in), .exit(exit), .pc_out(pc_out));
+	gpu_cache_L1 gcl();
 	
 	initial begin
 		$display("gpu");
-		program_counter <= pc;
+		pc_in <= pc;
 	end
 	
 	always@(posedge clk) begin
-		if (program_counter < highest_num) begin
-			program_counter <= program_counter + 1;
+		if (exit) begin
+			exit_ <= 1;
+		end
+		else if (pc_in < highest_num) begin
+			pc_in <= pc_out;
 			exit_ <= 0; 
 		end
-		exit_ <= 1;
+		else begin
+			exit_ <= 1;
+		end
 	end
 	
 endmodule

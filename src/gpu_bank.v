@@ -1,7 +1,7 @@
 module gpu_bank(
 	input wire clk,
-	input wire read,
-	input wire write,
+	input wire read_bank,
+	input wire write_bank,
 	input wire [5:0] target_reg,
 	input wire [63:0] in,
 	output wire write_out,
