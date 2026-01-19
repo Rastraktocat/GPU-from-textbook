@@ -3,12 +3,15 @@ module gpu_warp(
 	input wire [15:0] pc,
 	input wire instruction1 [63:0],
 	input wire instruction2 [63:0],
+	input wire bank_unveil_1, // ignore size for now.
+	input wire bank_unveil_2, // ignore size for now.
 	output wire cache_request1,
 	output wire cache_request2,
-	output wire bank_request1 [0:63],
-	output wire bank_request2 [0:63],
+	output wire [0:63] bank_request_read,
+	output wire [0:63] bank_request_write,
 	output wire bank_warp_num,
 	output reg [15:0] pc_out
+
 	);
 	
 	genvar i, j;
@@ -51,6 +54,8 @@ module gpu_warp(
 	assign inst1 = gpu_file[pc][127:64]; // Make gpu_file
 	assign inst2 = gpu_file[pc][63:0];
 	
+	reg opcodes_unveiled;
+	
 	reg branch_happening; // Both correlate to the threads. 
 	reg branch_taken; 
 	
@@ -76,55 +81,59 @@ module gpu_warp(
 	end	
 	
 	always@( posedge clk ) begin
-	
-		//
-		// Operand Size related stuff.
-		//
-		
-		assign operand_size_1 = address_opcode_1; // Actually allocate this properly.
-		assign operand_type_1 = address_opcode_1; // Actually allocate this properly. 
-		assign operand_size_2 = address_opcode_2;
-		assign operand_type_2 = address_opcode_2;
-		
-		if (operand_size_1 != operand_size_2) begin  
-			// Implement movzx and movsx handling.
-		end
-		
-		//
-		// Operand unveiling.
-		//
-		
-		if (operand_type_1 == 0) begin // reg
-			bank_request_1 = inst1;
-		end
-		
-		if (operand_type_2 == 0) begin // reg
-			bank_request_2 = inst2;
-		end
-		
-		if (operand_type_1 == 1) begin // mem
-		
-		end
-		
-		if (operand_type_2 == 1) begin // mem
-		
-		end
-		
-		//
-		// writeback
-		//
-		
-		if (bank_set != 0) begin
-			if (bank_set == 1) begin
+		if (!opcodes_unveiled) begin // thread decode stage.
+			//
+			// Operand Size related stuff.
+			//
+			
+			assign operand_size_1 = address_opcode_1; // Actually allocate this properly.
+			assign operand_type_1 = address_opcode_1; // Actually allocate this properly. 
+			assign operand_size_2 = address_opcode_2;
+			assign operand_type_2 = address_opcode_2;
+			
+			if (operand_size_1 != operand_size_2) begin  
+				// Implement movzx and movsx handling.
+			end
+			
+			//
+			// Operand unveiling.
+			//
+			
+			if (operand_type_1 == 0) begin // reg
+				bank_request_1 = inst1;
+			end
+			
+			if (operand_type_2 == 0) begin // reg
+				bank_request_2 = inst2;
+			end
+			
+			if (operand_type_1 == 1) begin // mem
+			
+			end
+			
+			if (operand_type_2 == 1) begin // mem
+			
+			end
+			
+			//
+			// writeback
+			//
+			
+			if (bank_set != 0) begin
+				if (bank_set == 1) begin
+					
+				end
+				if (bank_set == 2) begin
 				
-			end
-			if (bank_set == 2) begin
-			
-			end
-			if (bank_set == 3) begin
-			
+				end
+				if (bank_set == 3) begin
+				
+				end
 			end
 		end
 		
+		else begin // thread execute stage
+			
+		end
 	end // always
 endmodule
