@@ -15,7 +15,7 @@ module gpu_bank(
 	
 	integer i;
 	reg [63:0] bank_current;
-	reg [0:2047] bank_out;
+	reg [2047:0] bank_out;
 	reg [7:0] idx;
 	
 	always@(posedge clk) begin

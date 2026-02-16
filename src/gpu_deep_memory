@@ -1,0 +1,14 @@
+module deep_memory(
+    input wire clk,
+    
+    output wire [63:0] out
+);
+
+    reg [2:0] current_lookup [0:12]; // prt table
+    reg [] total_memory []; 
+
+    always@(posedge clk) begin
+        // add a lot of delay to model this 
+        // as taking really long. 
+    end
+endmodule

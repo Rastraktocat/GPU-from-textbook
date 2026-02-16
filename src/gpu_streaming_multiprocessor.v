@@ -1,4 +1,4 @@
-gpu_streaming_multiprocessor(
+module gpu_streaming_multiprocessor(
 	input wire clk,
 	input wire rst,
 	// Make the output information 
@@ -20,12 +20,17 @@ gpu_streaming_multiprocessor(
 	wire bank_read_boolean;
 	wire bank_write_boolean;
 	reg [0:2047] bank_out;
-	
+
+	reg [5:0]unveiled_list_warps [0:1]; // Fix the allocation.
+	// first 32 are inst1
+	// last 32 are inst2. Made for all of the 4 warps. 
+
 	genvar i;
 	integer k;
 	generate
 		for (i = 0; i < 4; i = i + 1) begin
-			gpu_warp gp(
+			//update the ports!!!!!.
+			gpu_warp gp( 
 				.clk(clk),
 				.pc(),
 				.instruction1(),
@@ -44,7 +49,7 @@ gpu_streaming_multiprocessor(
 		.in_frame(),
 		.in_request(cache_request), 
 		.cache_hit_or_miss(cache_return), 
-		.out(cache_out));
+		.out(cache_out)); 
 	
 	gpu_bank gb( // fix port declaration.
 		.clk(clk), 
