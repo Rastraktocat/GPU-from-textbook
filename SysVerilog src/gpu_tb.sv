@@ -1,8 +1,11 @@
 module gpu_tb;
 
- logic mem; 
+    logic mem; 
     // this is for simulating fetching
     // instructions. Size - 2+4+32+128
+    logic rst;
+
+    gpu g();
 
     initial begin
         // fopen is for debugging
@@ -24,6 +27,8 @@ module gpu_tb;
 
         // the actual operand | 64 bits each
         // 128 bits in total
+
+        rst = 0;
     end
 
 endmodule 
