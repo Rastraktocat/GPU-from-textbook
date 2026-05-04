@@ -1,34 +1,35 @@
-module gpu_tb;
 
+module gpu_tb;
+    import gpu_structs::*;
     logic mem; 
     // this is for simulating fetching
     // instructions. Size - 2+4+32+128
     logic rst;
 
-    gpu g();
+    logic clk = 0;
 
+    logic pc_test;
+
+    single_warp_inst_t single_warp_inst;
+
+    always #1 clk = ~clk;
+
+    gpu g(
+        .clk(clk),
+        .rst(rst),
+        .inst(single_warp_inst),
+        .pc(pc_test)
+    );
+
+    gpu_thread gt(
+        .clk(clk),
+        .thread_pc(),
+        .inst(),
+    );
+    
     initial begin
-        // fopen is for debugging
-        // readmemh is for sysverilog
-        $readmemh("instruction.txt", mem);
-        
-        // the operand size | made of 2 bits
-        // 00 is 8 bits | 01 is 16 bits
-        // 10 is 32 bits | 11 is 64 bits
-
-        // the addressing mode made of 2
-        // bit each 4 bits normally 
-        // THE FIRST OPERAND CANNOT
-        // BE AN IMMEDIATE.
-        // 0 is immediate | 1 is register
-        // 2 is memory address
-
-        // assume for now 32 bit opcodes.
-
-        // the actual operand | 64 bits each
-        // 128 bits in total
-
         rst = 0;
+        // implement here.
     end
 
 endmodule 
